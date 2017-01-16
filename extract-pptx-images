@@ -8,7 +8,7 @@ from pptx.util import Cm
 import fnmatch
 
 def show_usage():
-  print "USAGE: ./extract-images pptx-file [dir]"
+  print "USAGE: ./extract-pptx-images pptx-file [dir]"
 
 if len(sys.argv) < 2:
   show_usage()
