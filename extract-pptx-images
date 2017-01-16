@@ -21,7 +21,6 @@ basename = os.path.basename(filename)
 _dir = ""
 try:
     _dir = sys.argv[2]
-    print _dir
 except:
     pass
 
