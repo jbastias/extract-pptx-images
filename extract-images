@@ -2,12 +2,13 @@
 import os
 import sys
 import re
+import glob
 from pptx import Presentation
 from pptx.util import Cm
 import fnmatch
 
 def show_usage():
-  print "USAGE: ./extract-images pdf-file"
+  print "USAGE: ./extract-images pptx-file [dir]"
 
 if len(sys.argv) < 2:
   show_usage()
@@ -15,7 +16,18 @@ if len(sys.argv) < 2:
 
 filename = sys.argv[1]
 
-print filename
+basename = os.path.basename(filename)
+
+_dir = ""
+try:
+    _dir = sys.argv[2]
+    print _dir
+except:
+    pass
+
+if _dir != "" and not os.path.isdir(_dir):
+    print "directory %s does not exist." % _dir
+    exit()
 
 prs = Presentation(filename)
 
@@ -24,6 +36,7 @@ def save_image(filename, data):
     f.write(data)
     f.close()
 
+# extact-images
 _slide = 1
 for slide in prs.slides:
     for shape in slide.shapes:
@@ -31,3 +44,14 @@ for slide in prs.slides:
         filename = "slide_%s.png" % num
         save_image(filename, shape.image.blob)
     _slide = _slide + 1
+
+# rename if is ^test
+regexp = re.compile(r'^test-')
+if regexp.search(basename) is not None:
+    for slide in glob.glob('slide_*.png'):
+        os.rename(slide, "test-%s" % slide)
+
+# move if dir
+if _dir != "":
+    for f in glob.glob('*.png'):
+        os.rename(f, "%s/%s" % (_dir, f))
